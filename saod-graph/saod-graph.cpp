@@ -3,6 +3,7 @@
 #include <memory>
 #include <iostream>
 #include <list>     
+#include <map>
 #include <iterator> 
 
 using namespace std;
@@ -30,6 +31,13 @@ public:
 private:
 	list<graph_verge> _verges;
 	list<graph_node> _nodes;
+	std::map<int, std::map<int, double>> _conn_map;
+
+	void _re_map() {
+		_conn_map.clear();
+		
+
+	};
 
 public:
 	Graph() {};
@@ -43,14 +51,16 @@ public:
 	bool Verges_Del(int A, int B);
 	std::shared_ptr<graph_verge> Get_Verge(int A, int B);
 
-	void Nodes_Add(graph_node node);
+	void Nodes_Add(graph_node node) {
+		_nodes.
+	};
 	void Nodes_Add(int idx) { Nodes_Add(graph_node(idx)); };
 	bool Nodes_Del(int idx);
 	std::shared_ptr<graph_node> Get_Node(int idx);
 
 	void Print_Verges();
 	void Print_Nodes();
-	void Print_Connectivity_Matrix();
+	void Print_Connectivity_Matrix(); // Выводим граф в виде матрицы смежности
 
 };
 
