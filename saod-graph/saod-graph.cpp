@@ -59,39 +59,30 @@ public:
 	void *operator new(std::size_t) = delete; // Удаляем операторы new
 	void *operator new[](std::size_t) = delete; //
 	
-	void Verges_Add(node *A, node *B, double weight) {
-
-	};
-
-	void Verges_Add(int A, int B, double weight) { Verges_Add(new node(A),new node(B), weight); };
-
-	bool Verges_Del(int A, int B);
-
-	std::shared_ptr<verge> Get_Verge(int A, int B);
-
 	node * Get_Node(int idx) {
 		Graph::Nodes::iterator iter = std::find(_nodes.begin(), _nodes.end(), node(idx));
-		if (iter != std::end(_nodes))
-			return &(*iter);
-		else
-			return nullptr;
+		//if (iter != std::end(_nodes))
+		//	return &(*iter);
+		//else
+		//	return nullptr;
+		return (iter != std::end(_nodes)) ? &(*iter) : nullptr;
 	};
 
 	node * Get_Node(node &_node) {
 		Graph::Nodes::iterator iter = std::find(_nodes.begin(), _nodes.end(), _node);
-		if (iter != std::end(_nodes))
-			return &(*iter);
-		else
-			return nullptr;
+		//if (iter != std::end(_nodes))
+		//	return &(*iter);
+		//else
+		//	return nullptr;
+		return (iter != std::end(_nodes)) ? &(*iter) : nullptr;
 	};
 
-	bool Nodes_Add(node &node) {
-		if (Get_Node(node.node_idx)) {
+	bool Nodes_Add(node node) {
+		if (Get_Node(node.node_idx) == nullptr) {
 			_nodes.push_back(node);
 			return true;
-		} else {
+		} else 
 			return false;
-		}
 	};
 
 	bool Nodes_Add(int idx) { return Nodes_Add(node(idx)); };
@@ -105,7 +96,29 @@ public:
 		return false;
 	};
 
-	void Print_Verges();
+	void Verges_Add(node *A, node *B, double weight) {
+		node * nodeA = Get_Node(*A);
+		node * nodeB = Get_Node(*B);
+		if (nodeA == nullptr) 
+			Nodes_Add(*A);
+		if (nodeB == nullptr) 
+			Nodes_Add(*B);
+		verge new_verge(nodeA ? nodeA : A, nodeB ? nodeB : B, weight);
+		_verges.push_back(new_verge);
+	};
+
+	void Verges_Add(int A, int B, double weight) { Verges_Add(new node(A), new node(B), weight); };
+
+	bool Verges_Del(int A, int B);
+
+	std::shared_ptr<verge> Get_Verge(int A, int B);
+
+
+	void Print_Verges() {
+		for (const auto &it : _verges)
+			cout << "(" << it.node_A->node_idx << ")-(" << it.node_B->node_idx << ")[" << it.verge_weight <<"]\t";
+		cout << endl;
+	}
 
 	void Print_Nodes() {
 		for (const auto &it : _nodes) 
@@ -143,8 +156,19 @@ int main()
 	Graph::node * node = g1.Get_Node(1);
 	if (node) 
 		cout << "node found = " << node->node_idx << "(" << node->node_weight << ")" << endl;
+	Graph::node node2(5, 10);
+	g1.Get_Node(node2) ? 
+		cout << "node already exist = " << node2.node_idx << "(" << node2.node_weight << ")" << endl :
+		cout << "not found!";
 
-
+	cout << endl << "Adding verges and print nodes and verges..." << endl;
+	g1.Verges_Add(7, 8, 10.0);
+	g1.Verges_Add(8, 9, 11.0);
+	g1.Verges_Add(1, 8, 5.0);
+	g1.Verges_Add(2, 9, 6.0);
+	g1.Verges_Add(node, &node2, 999.0);
+	g1.Print_Nodes();
+	g1.Print_Verges();
 
 	cout << endl << "\n\nEnter x to exit...";
 	char a;

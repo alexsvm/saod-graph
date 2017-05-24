@@ -22,7 +22,7 @@
     <ProjectGuid>{7F05B340-234B-40DA-925E-5CD1BE6A9B84}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>saodgraph</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
