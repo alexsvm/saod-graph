@@ -48,8 +48,19 @@ private:
 
 	void _re_map() {
 		_conn_map.clear();
-		
-
+		for (const auto &n_col : _nodes) 
+			for (const auto &n_row : _nodes) {
+				verge * v = Get_Verge(n_col.node_idx, n_row.node_idx);
+				if (v == nullptr) 
+					_conn_map[n_col.node_idx][n_row.node_idx] = 0;
+				else
+					_conn_map[n_col.node_idx][n_row.node_idx] = v->verge_weight;
+				/*for (const auto &v : _verges)
+					if (v.node_A->node_idx == n_col.node_idx && v.node_B->node_idx == n_row.node_idx)
+						_conn_map[n_col.node_idx][n_row.node_idx] = v.verge_weight;
+					else
+						_conn_map[n_col.node_idx][n_row.node_idx] = 0;*/
+			}
 	};
 
 public:
@@ -80,6 +91,7 @@ public:
 	bool Nodes_Add(node node) {
 		if (Get_Node(node.node_idx) == nullptr) {
 			_nodes.push_back(node);
+			_nodes.sort();
 			return true;
 		} else 
 			return false;
@@ -96,6 +108,20 @@ public:
 		return false;
 	};
 
+	verge * Get_Verge(int A, int B) {
+		for (auto iter = _verges.begin(); iter != _verges.end(); iter++)
+			if (iter->node_A->node_idx == A && iter->node_B->node_idx == B)
+				return &(*iter);
+		return nullptr;
+	};
+
+	verge * Get_Verge(node &nodeA, node &nodeB) {
+		for (auto iter = _verges.begin(); iter != _verges.end(); iter++)
+			if (iter->node_A->node_idx == nodeA.node_idx && iter->node_B->node_idx == nodeB.node_idx)
+				return &(*iter);
+		return nullptr;
+	};
+
 	void Verges_Add(node *A, node *B, double weight) {
 		node * nodeA = Get_Node(*A);
 		node * nodeB = Get_Node(*B);
@@ -104,15 +130,17 @@ public:
 		if (nodeB == nullptr) 
 			Nodes_Add(*B);
 		verge new_verge(nodeA ? nodeA : A, nodeB ? nodeB : B, weight);
-		_verges.push_back(new_verge);
+		if (Get_Verge(*new_verge.node_A, *new_verge.node_B) == nullptr) {
+			_verges.push_back(new_verge);
+			_verges.sort();
+		}
 	};
 
 	void Verges_Add(int A, int B, double weight) { Verges_Add(new node(A), new node(B), weight); };
 
 	bool Verges_Del(int A, int B);
 
-	std::shared_ptr<verge> Get_Verge(int A, int B);
-
+	
 
 	void Print_Verges() {
 		for (const auto &it : _verges)
@@ -126,7 +154,20 @@ public:
 		cout << endl;
 	};
 
-	void Print_Connectivity_Matrix(); // Выводим граф в виде матрицы смежности
+	void Print_Connectivity_Matrix() { // Выводим граф в виде матрицы смежности
+		_re_map();
+		cout << "[ ]\t";
+		for (auto iter : _conn_map)
+			cout << "[" << iter.first << "]\t";
+		cout << endl;
+		for (auto iter : _conn_map) {
+			cout << "[" << iter.first << "]\t";
+			for (auto iter2 : iter.second) {
+				cout << iter2.second << "\t";
+			}
+			cout << endl;
+		}
+	}
 
 };
 
@@ -165,10 +206,14 @@ int main()
 	g1.Verges_Add(7, 8, 10.0);
 	g1.Verges_Add(8, 9, 11.0);
 	g1.Verges_Add(1, 8, 5.0);
-	g1.Verges_Add(2, 9, 6.0);
+	g1.Verges_Add(2, 9, 6.0); 
+	g1.Verges_Add(2, 9, 666.0);
+	g1.Verges_Add(2, 9, 666.0);
 	g1.Verges_Add(node, &node2, 999.0);
 	g1.Print_Nodes();
 	g1.Print_Verges();
+	cout << "\nPrinting connectivity matrix:" << endl;
+	g1.Print_Connectivity_Matrix();
 
 	cout << endl << "\n\nEnter x to exit...";
 	char a;
