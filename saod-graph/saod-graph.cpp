@@ -37,9 +37,9 @@ public:
 		};
 	};
 
-	typedef list<verge> Verges;
-	typedef list<node> Nodes;
-	typedef std::map<int, std::map<int, double>> ConnMap;
+	using Verges = list<verge>;
+	using Nodes = list<node>;
+	using ConnMap = std::map<int, std::map<int, double>>;
 
 private:
 	Verges _verges;
@@ -193,7 +193,6 @@ int main()
 	cout << "Printing nodes: " << endl;
 	g1.Print_Nodes();
 
-	//std::shared_ptr<Graph::graph_node> node_ptr = g1.Get_Node(1);
 	Graph::node * node = g1.Get_Node(1);
 	if (node) 
 		cout << "node found = " << node->node_idx << "(" << node->node_weight << ")" << endl;
