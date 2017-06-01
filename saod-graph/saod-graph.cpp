@@ -13,19 +13,19 @@ class Graph {
 
 public:
 	struct node {
-		int node_idx;
-		double node_weight;
-		node(int idx, double weight = 0) : node_idx(idx), node_weight(weight) { };
-		bool operator < (const node & second) { return node_idx < second.node_idx; };
-		bool operator == (const node & second) { return node_idx == second.node_idx; };
+		int node_idx; // Номер вершины
+		double node_weight; // Вес вершины
+		node(int idx, double weight = 0) : node_idx(idx), node_weight(weight) { }; // Конструктор, по умолчанию вес вершины = 0
+		bool operator < (const node & second) { return node_idx < second.node_idx; }; // Оператор < сравнения вершин по номеру
+		bool operator == (const node & second) { return node_idx == second.node_idx; }; // Оператор == сравнения вершин по номеру
 	};
 
 	struct verge {
-		node* node_A;
-		node* node_B;
-		double verge_weight;
-		verge(node* A, node* B, double weight) : node_A(A), node_B(B), verge_weight(weight) { };
-		verge(int A, int B, double weight) : node_A(new node(A)), node_B(new node(B)), verge_weight(weight) { };
+		node* node_A; // Указатель на первую вершину
+		node* node_B; // Указатель на вторую вершину
+		double verge_weight; // Вес ребра
+		verge(node* A, node* B, double weight) : node_A(A), node_B(B), verge_weight(weight) { }; // Конструктор
+		verge(int A, int B, double weight) : node_A(new node(A)), node_B(new node(B)), verge_weight(weight) { }; // Конструктор
 		bool operator < (const verge & second) { 
 			return (node_A->node_idx < second.node_A->node_idx) 
 				|| (node_A->node_idx == second.node_A->node_idx 
@@ -37,14 +37,14 @@ public:
 		};
 	};
 
-	using Verges = list<verge>;
-	using Nodes = list<node>;
+	using Verges = list<verge>; 
+	using Nodes = list<node>; 
 	using ConnMap = std::map<int, std::map<int, double>>;
 
 private:
-	Verges _verges;
-	Nodes _nodes;
-	ConnMap _conn_map;
+	Verges _verges; // Список ребер
+	Nodes _nodes; // Список вершин
+	ConnMap _conn_map; // Матрица смежности. _conn_map[i] - map<i, weight>
 
 	void _re_map() {
 		_conn_map.clear();
@@ -55,11 +55,6 @@ private:
 					_conn_map[n_col.node_idx][n_row.node_idx] = 0;
 				else
 					_conn_map[n_col.node_idx][n_row.node_idx] = v->verge_weight;
-				/*for (const auto &v : _verges)
-					if (v.node_A->node_idx == n_col.node_idx && v.node_B->node_idx == n_row.node_idx)
-						_conn_map[n_col.node_idx][n_row.node_idx] = v.verge_weight;
-					else
-						_conn_map[n_col.node_idx][n_row.node_idx] = 0;*/
 			}
 	};
 
@@ -72,10 +67,6 @@ public:
 	
 	node * Get_Node(int idx) {
 		Graph::Nodes::iterator iter = std::find(_nodes.begin(), _nodes.end(), node(idx));
-		//if (iter != std::end(_nodes))
-		//	return &(*iter);
-		//else
-		//	return nullptr;
 		return (iter != std::end(_nodes)) ? &(*iter) : nullptr;
 	};
 
@@ -163,7 +154,8 @@ public:
 		for (auto iter : _conn_map) {
 			cout << "[" << iter.first << "]\t";
 			for (auto iter2 : iter.second) {
-				cout << iter2.second << "\t";
+				(iter2.second == 0) ? cout << "-\t" : cout << iter2.second << "\t";
+				//cout << iter2.second << "\t";
 			}
 			cout << endl;
 		}
@@ -173,7 +165,7 @@ public:
 
 int main()
 {
-	//Graph* ptr = new Graph;
+	//Graph* ptr = new Graph; // А так нельзя - мы удалили оператор new 
 	
 	Graph::verge v1(1, 3, 10.0);
 	Graph::verge v2(1, 2, 10.0);
@@ -185,6 +177,7 @@ int main()
 	cout << (v1 == v2) << endl;
 	cout << (v1 == v5) << endl;
 
+	// Тестируем тип Граф
 	Graph g1;
 	g1.Nodes_Add(1);
 	g1.Nodes_Add(3);
@@ -214,6 +207,7 @@ int main()
 	cout << "\nPrinting connectivity matrix:" << endl;
 	g1.Print_Connectivity_Matrix();
 
+	// The end
 	cout << endl << "\n\nEnter x to exit...";
 	char a;
 	do { a = cin.get(); } while (a != 'x');
