@@ -19,13 +19,14 @@ public:
 		bool operator < (const node & second) { return node_idx < second.node_idx; }; // Оператор < сравнения вершин по номеру
 		bool operator == (const node & second) { return node_idx == second.node_idx; }; // Оператор == сравнения вершин по номеру
 	};
+	using sp_node = shared_ptr<node>;
 
 	struct verge {
-		node* node_A; // Указатель на первую вершину
-		node* node_B; // Указатель на вторую вершину
+		sp_node node_A; // Указатель на первую вершину
+		sp_node node_B; // Указатель на вторую вершину
 		double verge_weight; // Вес ребра
-		verge(node* A, node* B, double weight) : node_A(A), node_B(B), verge_weight(weight) { }; // Конструктор
-		verge(int A, int B, double weight) : node_A(new node(A)), node_B(new node(B)), verge_weight(weight) { }; // Конструктор
+		verge(sp_node A, sp_node B, double weight) : node_A(A), node_B(B), verge_weight(weight) { }; // Конструктор
+		verge(int A, int B, double weight) : node_A(make_shared<node>(new node(A))), node_B(make_shared<node>(new node(B))), verge_weight(weight) { }; // Конструктор
 		bool operator < (const verge & second) { 
 			return (node_A->node_idx < second.node_A->node_idx) 
 				|| (node_A->node_idx == second.node_A->node_idx 
@@ -36,6 +37,7 @@ public:
 				&& node_B->node_idx == second.node_B->node_idx; 
 		};
 	};
+	using sp_verge = shared_ptr<verge>;
 
 	using Verges = list<verge>; 
 	using Nodes = list<node>; 
@@ -70,17 +72,22 @@ public:
 	//	return (iter != std::end(_nodes)) ? &(*iter) : nullptr;
 	//};
 
-	shared_ptr<node> Get_Node(int idx) {
+	sp_node Get_Node(int idx) {
 		auto iter = std::find(_nodes.begin(), _nodes.end(), node(idx));
-		shared_ptr<node> p;
-		p = make_shared<node>(*iter);
-		//iter != std::end(_nodes) ? p = make_shared(*iter);
+		sp_node sp;
+		sp = make_shared<node>(*iter);
+		iter != std::end(_nodes) ? sp = make_shared<node>(*iter) : sp.reset();
+		return sp;
 		//return (iter != std::end(_nodes)) ? &(*iter) : nullptr;
 	};
 
-	node * Get_Node(node &_node) {
+	sp_node Get_Node(node &_node) {
 		Graph::Nodes::iterator iter = std::find(_nodes.begin(), _nodes.end(), _node);
-		return (iter != std::end(_nodes)) ? &(*iter) : nullptr;
+		sp_node sp;
+		sp = make_shared<node>(*iter);
+		iter != std::end(_nodes) ? sp = make_shared<node>(*iter) : sp.reset();
+		return sp;
+		//return (iter != std::end(_nodes)) ? &(*iter) : nullptr;
 	};
 
 	bool Nodes_Add(node node) {
@@ -118,8 +125,8 @@ public:
 	};
 
 	void Verges_Add(node *A, node *B, double weight) {
-		node * nodeA = Get_Node(*A);
-		node * nodeB = Get_Node(*B);
+		sp_node nodeA = Get_Node(*A);
+		sp_node nodeB = Get_Node(*B);
 		if (nodeA == nullptr) 
 			Nodes_Add(*A);
 		if (nodeB == nullptr) 
@@ -189,7 +196,7 @@ int main()
 	cout << "Printing nodes: " << endl;
 	g1.Print_Nodes();
 
-	Graph::node * node = g1.Get_Node(1);
+	Graph::sp_node node = g1.Get_Node(1);
 	if (node) 
 		cout << "node found = " << node->node_idx << "(" << node->node_weight << ")" << endl;
 	Graph::node node2(5, 10);
