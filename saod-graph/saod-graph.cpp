@@ -65,17 +65,21 @@ public:
 	void *operator new(std::size_t) = delete; // Удаляем операторы new
 	void *operator new[](std::size_t) = delete; //
 	
-	node * Get_Node(int idx) {
-		Graph::Nodes::iterator iter = std::find(_nodes.begin(), _nodes.end(), node(idx));
-		return (iter != std::end(_nodes)) ? &(*iter) : nullptr;
+	//node * Get_Node(int idx) {
+	//	Graph::Nodes::iterator iter = std::find(_nodes.begin(), _nodes.end(), node(idx));
+	//	return (iter != std::end(_nodes)) ? &(*iter) : nullptr;
+	//};
+
+	shared_ptr<node> Get_Node(int idx) {
+		auto iter = std::find(_nodes.begin(), _nodes.end(), node(idx));
+		shared_ptr<node> p;
+		p = make_shared<node>(*iter);
+		//iter != std::end(_nodes) ? p = make_shared(*iter);
+		//return (iter != std::end(_nodes)) ? &(*iter) : nullptr;
 	};
 
 	node * Get_Node(node &_node) {
 		Graph::Nodes::iterator iter = std::find(_nodes.begin(), _nodes.end(), _node);
-		//if (iter != std::end(_nodes))
-		//	return &(*iter);
-		//else
-		//	return nullptr;
 		return (iter != std::end(_nodes)) ? &(*iter) : nullptr;
 	};
 
@@ -155,7 +159,6 @@ public:
 			cout << "[" << iter.first << "]\t";
 			for (auto iter2 : iter.second) {
 				(iter2.second == 0) ? cout << "-\t" : cout << iter2.second << "\t";
-				//cout << iter2.second << "\t";
 			}
 			cout << endl;
 		}
