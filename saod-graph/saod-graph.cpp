@@ -124,9 +124,9 @@ public:
 		return nullptr;
 	};
 
-	void Verges_Add(node *A, node *B, double weight) {
-		sp_node nodeA = Get_Node(*A);
-		sp_node nodeB = Get_Node(*B);
+	void Verges_Add(sp_node A, sp_node B, double weight) {
+		sp_node nodeA = Get_Node(*A.get());
+		sp_node nodeB = Get_Node(*B.get());
 		if (nodeA == nullptr) 
 			Nodes_Add(*A);
 		if (nodeB == nullptr) 
@@ -138,7 +138,9 @@ public:
 		}
 	};
 
-	void Verges_Add(int A, int B, double weight) { Verges_Add(new node(A), new node(B), weight); };
+	void Verges_Add(int A, int B, double weight) { 
+		Verges_Add(make_shared<node>(new node(A)), make_shared<node>(new node(B)), weight); 
+	};
 
 	bool Verges_Del(int A, int B);
 
@@ -211,7 +213,7 @@ int main()
 	g1.Verges_Add(2, 9, 6.0); 
 	g1.Verges_Add(2, 9, 666.0);
 	g1.Verges_Add(2, 9, 666.0);
-	g1.Verges_Add(node, &node2, 999.0);
+	g1.Verges_Add(node, make_shared<Graph::node>(node2), 999.0);
 	g1.Print_Nodes();
 	g1.Print_Verges();
 	cout << "\nPrinting connectivity matrix:" << endl;
